@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ProfessorRepository {
     void salvarProfessor(Professor professor);
-    Optional<Professor> buscarPorCodigoProfessor(Long codigoFuncional);
+    Optional<Professor> buscarPorCodigoProfessor(int codigoFuncional);
     List<Professor> listarTodosProfessores();
-    void deletarProfessor(Long codigoFuncional);
+    void deletarProfessor(int codigoFuncional);
 }

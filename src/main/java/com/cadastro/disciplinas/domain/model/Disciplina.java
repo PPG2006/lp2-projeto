@@ -3,14 +3,14 @@ package com.cadastro.disciplinas.domain.model;
 import java.time.LocalDate;
 
 public class Disciplina {
-    private Long numero;
+    private int numero;
     private String nome;
     private LocalDate dataInicio;
     private LocalDate dataEncerramento;
     private Professor professor;
     private Curso curso;
 
-    public Disciplina(Long numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento, Professor professor, Curso curso) {
+    public Disciplina(int numero, String nome, LocalDate dataInicio, LocalDate dataEncerramento, Professor professor, Curso curso) {
         this.numero = numero;
         this.nome = nome;
         this.dataInicio = dataInicio;
@@ -30,7 +30,7 @@ public class Disciplina {
     }
 
     // Getters
-    public Long getNumero() { return numero; }
+    public int getNumero() { return numero; }
     public String getNome() { return nome; }
     public LocalDate getDataInicio() { return dataInicio; }
     public LocalDate getDataEncerramento() { return dataEncerramento; }
@@ -38,7 +38,7 @@ public class Disciplina {
     public Curso getCurso() { return curso; }
 
     // Setters
-    public void setNumero(Long numero) { this.numero = numero; }
+    public void setNumero(int numero) { this.numero = numero; }
     public void setNome(String nome) { this.nome = nome; }
     public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
     public void setDataEncerramento(LocalDate dataEncerramento) { this.dataEncerramento = dataEncerramento; }

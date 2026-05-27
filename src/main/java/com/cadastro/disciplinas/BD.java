@@ -1,7 +1,11 @@
 package com.cadastro.disciplinas;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,15 +23,73 @@ import com.cadastro.disciplinas.domain.repository.DisciplinaRepository;
 import com.cadastro.disciplinas.domain.repository.ProfessorRepository;
 
 public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepository{
+    private String url, usuario, senha;
+    private Connection conn;
+
+    public BD(String url, String usuario, String senha){
+        this.url = url;
+        this.usuario = usuario;
+        this.senha = senha;
+    }
+
    
-   @Override
+   public void ConectaBanco(){
+
+     try{
+            Connection conn1 = DriverManager.getConnection(url + "postgres",usuario,senha);
+
+            Statement stmt = conn1.createStatement();
+            ResultSet rs = stmt.executeQuery( "SELECT 1 FROM pg_database WHERE datname = 'escola'");
+            
+            if (!rs.next()){
+
+                System.out.println("Banco não existe");
+                stmt.executeUpdate("CREATE DATABASE escola");
+                conn = DriverManager.getConnection(url + "escola",usuario,senha );
+                rodaScript();
+                System.out.println("Banco criado!");
+             }else{
+                conn = DriverManager.getConnection(url + "escola",usuario,senha );
+             }
+             System.out.println("Conectado!");
+            
+        }
+        catch (Exception e) {
+            System.out.println("Erro:");
+            System.out.println(e.getMessage());
+            System.exit(-1);
+
+        }
+   }
+
+   public void rodaScript() {
+
+        try {
+            Path caminho = Paths.get("bd_lp2.sql");
+            String script = Files.readString(caminho);
+            Statement stmt2 = conn.createStatement();
+            String[] comandos = script.split(";");
+            for(String sql : comandos){
+                    if(!sql.trim().isEmpty()){
+                        stmt2.execute(sql);
+                    }
+                }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+   
+   
+    @Override
    public void salvarProfessor(Professor professor) {
         
         String sql = "INSERT INTO professor (codigo_funcional, nome, data_nascimento) VALUES (?, ?, ?)";
     
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setLong(1, professor.getCodigoFuncional());
+            pstmt.setInt(1, professor.getCodigoFuncional());
             pstmt.setString(2, professor.getNome());
             pstmt.setDate(3, Date.valueOf(professor.getDataNascimento())); 
             pstmt.executeUpdate(); 
@@ -39,16 +101,16 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
    
    @Override
-   public Optional<Professor> buscarPorCodigoProfessor(Long codigoFuncional){
+   public Optional<Professor> buscarPorCodigoProfessor(int codigoFuncional){
         
         String sql = "SELECT * FROM professor WHERE codigo_funcional = ?";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setLong(1, codigoFuncional);
+            stmt.setInt(1, codigoFuncional);
             try (ResultSet rs = stmt.executeQuery()){
             
                 if(rs.next()){
-                    Long codigo = rs.getLong("codigo_funcional");
+                    int codigo = rs.getInt("codigo_funcional");
                     String nome = rs.getString("nome");
                     LocalDate dataNasc = rs.getDate("data_nascimento").toLocalDate();
                     Professor professor = new Professor(codigo, nome, dataNasc);
@@ -70,7 +132,7 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Long codigoFuncional = rs.getLong("codigo_funcional");
+                int codigoFuncional = rs.getInt("codigo_funcional");
                 String nome = rs.getString("nome");
                 LocalDate dataNasc = rs.getDate("data_nascimento").toLocalDate();
                 Professor professor = new Professor(codigoFuncional, nome, dataNasc);
@@ -83,12 +145,12 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
 
    @Override
-   public void deletarProfessor(Long codigoFuncional){
+   public void deletarProfessor(int codigoFuncional){
         String sql = "DELETE FROM professor WHERE codigo_funcional = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setLong(1, codigoFuncional);
+            stmt.setInt(1, codigoFuncional);
             int linhasAfetadas = stmt.executeUpdate();
 
             if (linhasAfetadas == 0) {
@@ -109,7 +171,7 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
     
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setLong(1, curso.getCodigo());
+            pstmt.setInt(1, curso.getCodigo());
             pstmt.setString(2, curso.getNome());
             pstmt.setString(3, curso.getDescricao()); 
             pstmt.executeUpdate(); 
@@ -121,16 +183,16 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
    
    @Override
-   public Optional<Curso> buscarPorCodigoCurso(Long codigo){
+   public Optional<Curso> buscarPorCodigoCurso(int codigo){
         
         String sql = "SELECT * FROM curso WHERE codigo = ?";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setLong(1, codigo);
+            stmt.setInt(1, codigo);
             try (ResultSet rs = stmt.executeQuery()){
             
                 if(rs.next()){
-                    Long cd = rs.getLong("codigo");
+                    int cd = rs.getInt("codigo");
                     String nome = rs.getString("nome");
                     String descricao = rs.getString("descricao");
                     Curso curso = new Curso(cd, nome, descricao);
@@ -152,7 +214,7 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Long codigo = rs.getLong("codigo");
+                int codigo = rs.getInt("codigo");
                 String nome = rs.getString("nome");
                 String descricao = rs.getString("descricao");
                 Curso curso = new Curso(codigo, nome, descricao);
@@ -165,12 +227,12 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
 
    @Override
-   public void deletarCurso(Long codigo){
+   public void deletarCurso(int codigo){
         String sql = "DELETE FROM curso WHERE codigo = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setLong(1, codigo);
+            stmt.setInt(1, codigo);
             int linhasAfetadas = stmt.executeUpdate();
 
             if (linhasAfetadas == 0) {
@@ -191,12 +253,12 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
     
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setLong(1, disciplina.getNumero());
+            pstmt.setInt(1, disciplina.getNumero());
             pstmt.setString(2, disciplina.getNome());
             pstmt.setDate(3, Date.valueOf(disciplina.getDataInicio()));
             pstmt.setDate(4, Date.valueOf(disciplina.getDataEncerramento())); 
-            pstmt.setLong(5, disciplina.getProfessor().getCodigoFuncional());
-            pstmt.setLong(6, disciplina.getCurso().getCodigo());  
+            pstmt.setInt(5, disciplina.getProfessor().getCodigoFuncional());
+            pstmt.setInt(6, disciplina.getCurso().getCodigo());  
 
             pstmt.executeUpdate(); 
             System.out.println("Inserido com sucesso!");
@@ -207,23 +269,23 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
    
    @Override
-   public Optional<Disciplina> buscarPorNumeroDisciplina(Long numero){
+   public Optional<Disciplina> buscarPorNumeroDisciplina(int numero){
     
         String sql = "SELECT * FROM disciplina WHERE numero = ?";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setLong(1, numero);
+            stmt.setInt(1, numero);
             try (ResultSet rs = stmt.executeQuery()){
             
                 if(rs.next()){
-                    Long nro = rs.getLong("numero");
+                    int nro = rs.getInt("numero");
                     String nome = rs.getString("nome");
                     LocalDate dataInicio = rs.getDate("data_inicio").toLocalDate();
                     LocalDate dataEncerramento = rs.getDate("data_encerramento").toLocalDate();
                     Professor professor = new Professor(null, null, null);
-                    professor.setCodigoFuncional(rs.getLong("codigo_professor"));
+                    professor.setCodigoFuncional(rs.getInt("codigo_professor"));
                     Curso curso = new Curso(null, null, null);
-                    curso.setCodigo(rs.getLong("codigo_curso"));
+                    curso.setCodigo(rs.getInt("codigo_curso"));
                     
                     Disciplina disciplina = new Disciplina (nro, nome, dataInicio, dataEncerramento, professor, curso);
                     return Optional.of(disciplina);
@@ -244,18 +306,18 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Long nro = rs.getLong("numero");
+                int nro = rs.getInt("numero");
                 String nome = rs.getString("nome");
                 LocalDate dataInicio = rs.getDate("data_inicio").toLocalDate();
                 LocalDate dataEncerramento = rs.getDate("data_encerramento").toLocalDate();
 
                 Disciplina disciplina = new Disciplina(null, null, null, null, null, null);
                 Professor codigoProfessor = new Professor(null, null, null);
-                codigoProfessor.setCodigoFuncional(rs.getLong("codigo_professor"));
+                codigoProfessor.setCodigoFuncional(rs.getInt("codigo_professor"));
                 disciplina.setProfessor(codigoProfessor);
 
                 Curso codigoCurso = new Curso(null, null, null);
-                codigoCurso.setCodigo(rs.getLong("codigo_curso"));
+                codigoCurso.setCodigo(rs.getInt("codigo_curso"));
                 disciplina.setCurso(codigoCurso);
                     
                 disciplina = new Disciplina (nro, nome, dataInicio, dataEncerramento, codigoProfessor, codigoCurso);
@@ -268,12 +330,12 @@ public class BD implements ProfessorRepository, CursoRepository, DisciplinaRepos
    }
 
    @Override
-   public void deletarDisciplina(Long numero){
+   public void deletarDisciplina(int numero){
         String sql = "DELETE FROM disciplina WHERE numero = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setLong(1, numero);
+            stmt.setInt(1, numero);
             int linhasAfetadas = stmt.executeUpdate();
 
             if (linhasAfetadas == 0) {

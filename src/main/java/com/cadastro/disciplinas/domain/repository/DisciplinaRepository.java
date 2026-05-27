@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface DisciplinaRepository {
     void salvarDisciplina(Disciplina disciplina);
+    void atualizarDisciplina(Disciplina disciplina);
     Optional<Disciplina> buscarPorNumeroDisciplina(int numero);
     List<Disciplina> listarTodasDisciplinas();
     void deletarDisciplina(int numero);

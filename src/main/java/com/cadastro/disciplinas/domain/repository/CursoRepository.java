@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface CursoRepository {
     void salvarCurso(Curso curso);
+    void atualizarCurso(Curso curso);
     Optional<Curso> buscarPorCodigoCurso(int codigo);
     List<Curso> listarTodosCursos();
     void deletarCurso(int codigo);

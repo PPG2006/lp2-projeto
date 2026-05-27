@@ -1,80 +1,138 @@
 classDiagram
     class Professor {
-        -Long codigoFuncional
+        -int codigoFuncional
         -String nome
         -LocalDate dataNascimento
-        +getCodigoFuncional() Long
+        +getCodigoFuncional() int
         +getNome() String
         +getDataNascimento() LocalDate
-        +setCodigoFuncional(Long)
+        +setCodigoFuncional(int)
         +setNome(String)
         +setDataNascimento(LocalDate)
     }
 
     class Curso {
-        -Long codigo
+        -int codigo
         -String nome
         -String descricao
-        +getCodigo() Long
+        +getCodigo() int
         +getNome() String
         +getDescricao() String
-        +setCodigo(Long)
+        +setCodigo(int)
         +setNome(String)
         +setDescricao(String)
     }
 
     class Disciplina {
-        -Long numero
+        -int numero
         -String nome
         -LocalDate dataInicio
         -LocalDate dataEncerramento
         -Professor professor
         -Curso curso
+        +getNumero() int
+        +getNome() String
+        +getDataInicio() LocalDate
+        +getDataEncerramento() LocalDate
+        +getProfessor() Professor
+        +getCurso() Curso
+        +setNumero(int)
+        +setNome(String)
+        +setDataInicio(LocalDate)
+        +setDataEncerramento(LocalDate)
+        +setProfessor(Professor)
+        +setCurso(Curso)
         +validarDataInicio(LocalDate)
     }
     
     class ProfessorRepository {
         <<Interface>>
-        +salvar(Professor)
-        +buscarPorCodigo(Long)
-        +listarTodos()
-        +deletar(Long)
+        +salvarProfessor(Professor)
+        +atualizarProfessor(Professor)
+        +buscarPorCodigoProfessor(int) Optional~Professor~
+        +listarTodosProfessores() List~Professor~
+        +deletarProfessor(int)
     }
 
     class CursoRepository {
         <<Interface>>
-        +salvar(Curso)
-        +buscarPorCodigo(Long)
-        +listarTodos()
-        +deletar(Long)
+        +salvarCurso(Curso)
+        +atualizarCurso(Curso)
+        +buscarPorCodigoCurso(int) Optional~Curso~
+        +listarTodosCursos() List~Curso~
+        +deletarCurso(int)
     }
 
     class DisciplinaRepository {
         <<Interface>>
-        +salvar(Disciplina)
-        +buscarPorNumero(Long)
-        +listarTodas()
-        +deletar(Long)
+        +salvarDisciplina(Disciplina)
+        +atualizarDisciplina(Disciplina)
+        +buscarPorNumeroDisciplina(int) Optional~Disciplina~
+        +listarTodasDisciplinas() List~Disciplina~
+        +deletarDisciplina(int)
+    }
+
+    class BD {
+        -Connection conn
+        +BD(String, String, String)
+        -ConectaBanco(String, String, String)
+        +rodaScript()
     }
 
     class ProfessorService {
         -ProfessorRepository professorRepository
+        +ProfessorService(ProfessorRepository)
         +cadastrarProfessor(Professor)
+        +atualizarProfessor(Professor)
     }
 
     class CursoService {
         -CursoRepository cursoRepository
+        +CursoService(CursoRepository)
         +cadastrarCurso(Curso)
+        +atualizarCurso(Curso)
     }
 
     class DisciplinaService {
         -DisciplinaRepository disciplinaRepository
+        +DisciplinaService(DisciplinaRepository)
         +registrarDisciplina(Disciplina)
+        +atualizarDisciplina(Disciplina)
+    }
+
+    class UI {
+        -BD bd
+        -ProfessorService professorService
+        -CursoService cursoService
+        -DisciplinaService disciplinaService
+        -Scanner scanner
+        -DateTimeFormatter formatter
+        +UI(BD)
+        +iniciar()
+        -menuProfessores()
+        -menuCursos()
+        -menuDisciplinas()
+    }
+
+    class Main {
+        +main(String[])
     }
 
     Disciplina "1" -- "1" Professor : professor
     Disciplina "1" -- "1" Curso : curso
     
-    ProfessorService ..> ProfessorRepository : injeção
-    CursoService ..> CursoRepository : injeção
-    DisciplinaService ..> DisciplinaRepository : injeção
+    ProfessorService ..> ProfessorRepository : injeta
+    CursoService ..> CursoRepository : injeta
+    DisciplinaService ..> DisciplinaRepository : injeta
+
+    BD ..|> ProfessorRepository : implementa
+    BD ..|> CursoRepository : implementa
+    BD ..|> DisciplinaRepository : implementa
+
+    UI --> BD : depende
+    UI --> ProfessorService : depende
+    UI --> CursoService : depende
+    UI --> DisciplinaService : depende
+    
+    Main --> UI : invoca
+    Main --> BD : instancia

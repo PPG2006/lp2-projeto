@@ -3,6 +3,8 @@ target/
 log/
 logs/
 
+.env
+
 # IntelliJ IDEA
 .idea/
 *.iws

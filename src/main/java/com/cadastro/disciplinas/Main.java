@@ -1,19 +1,18 @@
 package com.cadastro.disciplinas;
 
-import com.cadastro.disciplinas.domain.repository.TodosRepository;
+import com.cadastro.disciplinas.domain.repository.ITodosRepository;
+import com.cadastro.disciplinas.infrastructure.database.BD;
 
 public class Main {
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
         String url = "jdbc:postgresql://localhost:5432/";
-        String usuario = "postgres";
-        String senha = "postgres";
+        String usuario = "teles";
+        String senha = "pg";
 
         BD banco = new BD(url, usuario, senha);
 
-        UI ui = new UI((TodosRepository) banco);
+        UI ui = new UI((ITodosRepository) banco);
         ui.iniciar();
-
     }
-
 }

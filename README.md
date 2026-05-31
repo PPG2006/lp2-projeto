@@ -1,5 +1,7 @@
 # Cadastro de Disciplinas
 
+repositório do projeto: https://github.com/sixels/lp2-projeto
+
 Sistema de gerenciamento escolar desenvolvido em Java com o objetivo de registrar e manter o cadastro de disciplinas, professores e cursos de uma instituição de ensino.
 
 ## Requisitos Funcionais

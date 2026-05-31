@@ -1,28 +1,30 @@
 package com.cadastro.disciplinas;
 
+import com.cadastro.disciplinas.domain.model.Curso;
+import com.cadastro.disciplinas.domain.model.Disciplina;
+import com.cadastro.disciplinas.domain.model.Professor;
+import com.cadastro.disciplinas.domain.repository.ITodosRepository;
+import com.cadastro.disciplinas.service.CursoService;
+import com.cadastro.disciplinas.service.DisciplinaService;
+import com.cadastro.disciplinas.service.ProfessorService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.cadastro.disciplinas.domain.model.Curso;
-import com.cadastro.disciplinas.domain.model.Disciplina;
-import com.cadastro.disciplinas.domain.model.Professor;
-import com.cadastro.disciplinas.domain.repository.TodosRepository;
-import com.cadastro.disciplinas.service.CursoService;
-import com.cadastro.disciplinas.service.DisciplinaService;
-import com.cadastro.disciplinas.service.ProfessorService;
-
 public class UI {
-    private final TodosRepository repositorio;
+
+    private final ITodosRepository repositorio;
     private final ProfessorService professorService;
     private final CursoService cursoService;
     private final DisciplinaService disciplinaService;
     private final Scanner scanner;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+        "dd/MM/yyyy"
+    );
 
-    public UI(TodosRepository repositorio) {
+    public UI(ITodosRepository repositorio) {
         this.repositorio = repositorio;
         this.professorService = new ProfessorService(repositorio);
         this.cursoService = new CursoService(repositorio);
@@ -75,33 +77,54 @@ public class UI {
                         System.out.print("Nome: ");
                         String nome = scanner.nextLine();
                         System.out.print("Data de Nascimento (dd/MM/yyyy): ");
-                        LocalDate dataNascimento = LocalDate.parse(scanner.nextLine(), formatter);
-                        Professor professor = new Professor(codigo, nome, dataNascimento);
+                        LocalDate dataNascimento = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
+                        Professor professor = new Professor(
+                            codigo,
+                            nome,
+                            dataNascimento
+                        );
                         professorService.cadastrarProfessor(professor);
                     } catch (Exception e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
                 }
                 case 2 -> {
-                    List<Professor> lista = repositorio.listarTodosProfessores();
+                    List<Professor> lista =
+                        repositorio.listarTodosProfessores();
                     System.out.println("\n--- Lista de Professores ---");
                     for (Professor p : lista) {
-                        System.out.printf("Cód: %d | Nome: %s | Nasc: %s\n", p.getCodigoFuncional(), p.getNome(), p.getDataNascimento().format(formatter));
+                        System.out.printf(
+                            "Cód: %d | Nome: %s | Nasc: %s\n",
+                            p.getCodigoFuncional(),
+                            p.getNome(),
+                            p.getDataNascimento().format(formatter)
+                        );
                     }
                 }
                 case 3 -> {
                     try {
-                        System.out.print("Código Funcional do Professor a atualizar: ");
+                        System.out.print(
+                            "Código Funcional do Professor a atualizar: "
+                        );
                         int codigo = Integer.parseInt(scanner.nextLine());
-                        Optional<Professor> pOpt = repositorio.buscarPorCodigoProfessor(codigo);
+                        Optional<Professor> pOpt =
+                            repositorio.buscarPorCodigoProfessor(codigo);
                         if (pOpt.isEmpty()) {
                             System.out.println("Professor não encontrado.");
                             break;
                         }
                         System.out.print("Novo Nome: ");
                         String nome = scanner.nextLine();
-                        System.out.print("Nova Data de Nascimento (dd/MM/yyyy): ");
-                        LocalDate dataNascimento = LocalDate.parse(scanner.nextLine(), formatter);
+                        System.out.print(
+                            "Nova Data de Nascimento (dd/MM/yyyy): "
+                        );
+                        LocalDate dataNascimento = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
                         Professor p = pOpt.get();
                         p.setNome(nome);
                         p.setDataNascimento(dataNascimento);
@@ -111,7 +134,9 @@ public class UI {
                     }
                 }
                 case 4 -> {
-                    System.out.print("Código Funcional do Professor a remover: ");
+                    System.out.print(
+                        "Código Funcional do Professor a remover: "
+                    );
                     int codigo = Integer.parseInt(scanner.nextLine());
                     repositorio.deletarProfessor(codigo);
                 }
@@ -152,14 +177,21 @@ public class UI {
                     List<Curso> lista = repositorio.listarTodosCursos();
                     System.out.println("\n--- Lista de Cursos ---");
                     for (Curso c : lista) {
-                        System.out.printf("Cód: %d | Nome: %s | Descrição: %s\n", c.getCodigo(), c.getNome(), c.getDescricao());
+                        System.out.printf(
+                            "Cód: %d | Nome: %s | Descrição: %s\n",
+                            c.getCodigo(),
+                            c.getNome(),
+                            c.getDescricao()
+                        );
                     }
                 }
                 case 3 -> {
                     try {
                         System.out.print("Código do Curso a atualizar: ");
                         int codigo = Integer.parseInt(scanner.nextLine());
-                        Optional<Curso> cOpt = repositorio.buscarPorCodigoCurso(codigo);
+                        Optional<Curso> cOpt = repositorio.buscarPorCodigoCurso(
+                            codigo
+                        );
                         if (cOpt.isEmpty()) {
                             System.out.println("Curso não encontrado.");
                             break;
@@ -207,43 +239,71 @@ public class UI {
                         System.out.print("Nome: ");
                         String nome = scanner.nextLine();
                         System.out.print("Data de Início (dd/MM/yyyy): ");
-                        LocalDate dataInicio = LocalDate.parse(scanner.nextLine(), formatter);
+                        LocalDate dataInicio = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
                         System.out.print("Data de Encerramento (dd/MM/yyyy): ");
-                        LocalDate dataEncerramento = LocalDate.parse(scanner.nextLine(), formatter);
-                        
+                        LocalDate dataEncerramento = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
+
                         System.out.print("Código Funcional do Professor: ");
-                        int codigoProfessor = Integer.parseInt(scanner.nextLine());
-                        Professor professor = repositorio.buscarPorCodigoProfessor(codigoProfessor)
-                            .orElseThrow(() -> new RuntimeException("Professor não encontrado!"));
+                        int codigoProfessor = Integer.parseInt(
+                            scanner.nextLine()
+                        );
+                        Professor professor = repositorio
+                            .buscarPorCodigoProfessor(codigoProfessor)
+                            .orElseThrow(() ->
+                                new RuntimeException(
+                                    "Professor não encontrado!"
+                                )
+                            );
 
                         System.out.print("Código do Curso: ");
                         int codigoCurso = Integer.parseInt(scanner.nextLine());
-                        Curso curso = repositorio.buscarPorCodigoCurso(codigoCurso)
-                            .orElseThrow(() -> new RuntimeException("Curso não encontrado!"));
+                        Curso curso = repositorio
+                            .buscarPorCodigoCurso(codigoCurso)
+                            .orElseThrow(() ->
+                                new RuntimeException("Curso não encontrado!")
+                            );
 
-                        Disciplina disciplina = new Disciplina(numero, nome, dataInicio, dataEncerramento, professor, curso);
+                        Disciplina disciplina = new Disciplina(
+                            numero,
+                            nome,
+                            dataInicio,
+                            dataEncerramento,
+                            professor,
+                            curso
+                        );
                         disciplinaService.registrarDisciplina(disciplina);
                     } catch (Exception e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
                 }
                 case 2 -> {
-                    List<Disciplina> lista = repositorio.listarTodasDisciplinas();
+                    List<Disciplina> lista =
+                        repositorio.listarTodasDisciplinas();
                     System.out.println("\n--- Lista de Disciplinas ---");
                     for (Disciplina d : lista) {
-                        System.out.printf("Num: %d | Nome: %s | Início: %s | Enc: %s | Prof Cód: %d | Curso Cód: %d\n", 
-                            d.getNumero(), d.getNome(), 
-                            d.getDataInicio().format(formatter), 
+                        System.out.printf(
+                            "Num: %d | Nome: %s | Início: %s | Enc: %s | Prof Cód: %d | Curso Cód: %d\n",
+                            d.getNumero(),
+                            d.getNome(),
+                            d.getDataInicio().format(formatter),
                             d.getDataEncerramento().format(formatter),
                             d.getProfessor().getCodigoFuncional(),
-                            d.getCurso().getCodigo());
+                            d.getCurso().getCodigo()
+                        );
                     }
                 }
                 case 3 -> {
                     try {
                         System.out.print("Número da Disciplina a atualizar: ");
                         int numero = Integer.parseInt(scanner.nextLine());
-                        Optional<Disciplina> dOpt = repositorio.buscarPorNumeroDisciplina(numero);
+                        Optional<Disciplina> dOpt =
+                            repositorio.buscarPorNumeroDisciplina(numero);
                         if (dOpt.isEmpty()) {
                             System.out.println("Disciplina não encontrada.");
                             break;
@@ -251,19 +311,39 @@ public class UI {
                         System.out.print("Novo Nome: ");
                         String nome = scanner.nextLine();
                         System.out.print("Nova Data de Início (dd/MM/yyyy): ");
-                        LocalDate dataInicio = LocalDate.parse(scanner.nextLine(), formatter);
-                        System.out.print("Nova Data de Encerramento (dd/MM/yyyy): ");
-                        LocalDate dataEncerramento = LocalDate.parse(scanner.nextLine(), formatter);
-                        
-                        System.out.print("Novo Código Funcional do Professor: ");
-                        int codigoProfessor = Integer.parseInt(scanner.nextLine());
-                        Professor professor = repositorio.buscarPorCodigoProfessor(codigoProfessor)
-                            .orElseThrow(() -> new RuntimeException("Professor não encontrado!"));
+                        LocalDate dataInicio = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
+                        System.out.print(
+                            "Nova Data de Encerramento (dd/MM/yyyy): "
+                        );
+                        LocalDate dataEncerramento = LocalDate.parse(
+                            scanner.nextLine(),
+                            formatter
+                        );
+
+                        System.out.print(
+                            "Novo Código Funcional do Professor: "
+                        );
+                        int codigoProfessor = Integer.parseInt(
+                            scanner.nextLine()
+                        );
+                        Professor professor = repositorio
+                            .buscarPorCodigoProfessor(codigoProfessor)
+                            .orElseThrow(() ->
+                                new RuntimeException(
+                                    "Professor não encontrado!"
+                                )
+                            );
 
                         System.out.print("Novo Código do Curso: ");
                         int codigoCurso = Integer.parseInt(scanner.nextLine());
-                        Curso curso = repositorio.buscarPorCodigoCurso(codigoCurso)
-                            .orElseThrow(() -> new RuntimeException("Curso não encontrado!"));
+                        Curso curso = repositorio
+                            .buscarPorCodigoCurso(codigoCurso)
+                            .orElseThrow(() ->
+                                new RuntimeException("Curso não encontrado!")
+                            );
 
                         Disciplina d = dOpt.get();
                         d.setNome(nome);

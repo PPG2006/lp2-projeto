@@ -1,13 +1,13 @@
 package com.cadastro.disciplinas.service;
 
 import com.cadastro.disciplinas.domain.model.Curso;
-import com.cadastro.disciplinas.domain.repository.CursoRepository;
+import com.cadastro.disciplinas.domain.repository.ICursoRepository;
 
 public class CursoService {
-    private final CursoRepository cursoRepository;
+    private final ICursoRepository cursoRepository;
 
     // Injeção de dependência via construtor
-    public CursoService(CursoRepository cursoRepository) {
+    public CursoService(ICursoRepository cursoRepository) {
         this.cursoRepository = cursoRepository;
     }
 

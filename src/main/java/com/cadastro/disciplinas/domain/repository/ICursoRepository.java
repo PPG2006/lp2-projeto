@@ -4,7 +4,7 @@ import com.cadastro.disciplinas.domain.model.Curso;
 import java.util.List;
 import java.util.Optional;
 
-public interface CursoRepository {
+public interface ICursoRepository {
     void salvarCurso(Curso curso);
     void atualizarCurso(Curso curso);
     Optional<Curso> buscarPorCodigoCurso(int codigo);

@@ -4,7 +4,7 @@ import com.cadastro.disciplinas.domain.model.Professor;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProfessorRepository {
+public interface IProfessorRepository {
     void salvarProfessor(Professor professor);
     void atualizarProfessor(Professor professor);
     Optional<Professor> buscarPorCodigoProfessor(int codigoFuncional);

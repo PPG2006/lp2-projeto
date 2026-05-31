@@ -1,14 +1,14 @@
 package com.cadastro.disciplinas.service;
 
 import com.cadastro.disciplinas.domain.model.Disciplina;
-import com.cadastro.disciplinas.domain.repository.DisciplinaRepository;
+import com.cadastro.disciplinas.domain.repository.IDisciplinaRepository;
 import java.time.LocalDate;
 
 public class DisciplinaService {
-    private final DisciplinaRepository disciplinaRepository;
+    private final IDisciplinaRepository disciplinaRepository;
 
     // Injeção de dependência via construtor
-    public DisciplinaService(DisciplinaRepository disciplinaRepository) {
+    public DisciplinaService(IDisciplinaRepository disciplinaRepository) {
         this.disciplinaRepository = disciplinaRepository;
     }
 

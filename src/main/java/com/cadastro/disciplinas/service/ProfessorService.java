@@ -3,13 +3,13 @@ package com.cadastro.disciplinas.service;
 import java.time.LocalDate;
 
 import com.cadastro.disciplinas.domain.model.Professor;
-import com.cadastro.disciplinas.domain.repository.ProfessorRepository;
+import com.cadastro.disciplinas.domain.repository.IProfessorRepository;
 
 public class ProfessorService{
-    private final ProfessorRepository professorRepository;
+    private final IProfessorRepository professorRepository;
 
     // Injeção de dependência via construtor
-    public ProfessorService(ProfessorRepository professorRepository) {
+    public ProfessorService(IProfessorRepository professorRepository) {
         this.professorRepository = professorRepository;
     }
 
